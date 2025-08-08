@@ -20,16 +20,25 @@ button:hover{border-color:var(--accent)}
 main{padding:16px;max-width:900px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
 .card h2{margin:0 0 8px 0;font-size:1.1rem}
-.item{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:center;padding:8px;border-top:1px dashed var(--border)}
+.item{display:grid;grid-template-columns:28px 1fr 118px;gap:10px;align-items:center;padding:10px;border-top:1px dashed var(--border)}
 .item:first-child{border-top:none}
 .item small{color:var(--muted)}
+.thumb{width:118px;height:auto;cursor:pointer;border:1px solid var(--border);border-radius:6px;background:#000}
+.thumb-label{color:var(--muted);font-size:0.7rem;text-align:center;margin-top:4px}
 footer{color:var(--muted);padding:24px 0;text-align:center}
+
+/* Lightbox */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;justify-content:center;align-items:center;padding:20px}
+#lightbox img{max-width:92vw;max-height:90vh;border:4px solid #fff;border-radius:8px;background:#000}
+#lightbox .close{position:absolute;top:12px;right:16px;font-size:28px;color:#fff;cursor:pointer}
+#lightbox .caption{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#fff;font-size:0.9rem}
+.missing{background:repeating-linear-gradient(45deg,#222,#222 10px,#333 10px,#333 20px)}
 </style>
 </head>
 <body>
 <header>
   <h1>Scapular & Rib Program</h1>
-  <p class="subtitle">Offline • Progress tracking</p>
+  <p class="subtitle">GIF thumbnails (click to enlarge) • Progress tracking</p>
   <div class="top-actions">
     <button id="markAll">Mark all done</button>
     <button id="clearToday">Clear today</button>
@@ -45,58 +54,105 @@ footer{color:var(--muted);padding:24px 0;text-align:center}
 
 <main id="plan"></main>
 
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox(event)">
+  <span class="close" aria-label="Close">×</span>
+  <img id="lightboxImg" src="" alt="exercise demo">
+  <div class="caption" id="lightboxCap"></div>
+</div>
+
 <footer>
-  <p>Tip: Do Core/Rib first, then Activation, Strength, Stretch. Keep left ribs down.</p>
+  <p>Flow: Core/Rib → Activation → Strength → Stretch. Keep left ribs down.</p>
 </footer>
 
 <script>
+// Map exercise IDs to GIF paths in /gifs
+const GIFS = {
+  core_9090:        'gifs/core_9090.gif',
+  core_deadbug:     'gifs/core_deadbug.gif',
+  core_sideplank:   'gifs/core_sideplank.gif',
+  act_wallangels:   'gifs/act_wallangels.gif',
+  act_serratusslides:'gifs/act_serratusslides.gif',
+  act_retdep:       'gifs/act_retdep.gif',
+  str_right_punch:  'gifs/str_right_punch.gif',
+  str_right_ytyw:   'gifs/str_right_ytyw.gif',
+  str_left_y:       'gifs/str_left_y.gif',
+  str_left_latprayer:'gifs/str_left_latprayer.gif',
+  str_both_rower:   'gifs/str_both_rower.gif',
+  strch_pec:        'gifs/strch_pec.gif',
+  strch_utrap:      'gifs/strch_utrap.gif'
+};
+
 const PLAN = [
   {section:"Core / Rib Control", items:[
-    {name:"90/90 Breathing with Left Reach", side:"Left", sets:"3", reps:"5 breaths"},
-    {name:"Dead Bug (Left Focus)", side:"Left", sets:"2", reps:"8 per side"},
-    {name:"Side Plank", side:"Left", sets:"2", reps:"20–30 sec"}
+    {id:"core_9090", name:"90/90 Breathing with Left Reach", side:"Left", sets:"3", reps:"5 breaths"},
+    {id:"core_deadbug", name:"Dead Bug (Left Focus)", side:"Left", sets:"2", reps:"8 per side"},
+    {id:"core_sideplank", name:"Side Plank", side:"Left", sets:"2", reps:"20–30 sec"}
   ]},
   {section:"Scapular Activation", items:[
-    {name:"Wall Angels", side:"Both", sets:"2", reps:"10"},
-    {name:"Serratus Wall Slides", side:"Right", sets:"2", reps:"10"},
-    {name:"Scap Retraction & Depression Hold", side:"Left", sets:"2", reps:"10 (3s hold)"}
+    {id:"act_wallangels", name:"Wall Angels", side:"Both", sets:"2", reps:"10"},
+    {id:"act_serratusslides", name:"Serratus Wall Slides", side:"Right", sets:"2", reps:"10"},
+    {id:"act_retdep", name:"Scap Retraction & Depression Hold", side:"Left", sets:"2", reps:"10 (3s hold)"}
   ]},
   {section:"Strength – Right (Wing Fix)", items:[
-    {name:"Serratus Punch", side:"Right", sets:"3", reps:"12"},
-    {name:"Prone Y-T-W (hold top 2–3s on right)", side:"Right emphasis", sets:"2", reps:"10 each shape"}
+    {id:"str_right_punch", name:"Serratus Punch", side:"Right", sets:"3", reps:"12"},
+    {id:"str_right_ytyw", name:"Prone Y‑T‑W (hold top 2–3s on right)", side:"Right emphasis", sets:"2", reps:"10 each shape"}
   ]},
   {section:"Strength – Left (Lower Trap)", items:[
-    {name:"Prone Y Raise", side:"Left", sets:"3", reps:"12"},
-    {name:"Lat Prayer Lift", side:"Left", sets:"3", reps:"10"}
+    {id:"str_left_y", name:"Prone Y Raise", side:"Left", sets:"3", reps:"12"},
+    {id:"str_left_latprayer", name:"Lat Prayer Lift", side:"Left", sets:"3", reps:"10"}
   ]},
   {section:"Strength – Both", items:[
-    {name:"Single-arm Band Row → External Rotation", side:"Both", sets:"3", reps:"12 each"}
+    {id:"str_both_rower", name:"Single‑arm Band Row → External Rotation", side:"Both", sets:"3", reps:"12 each"}
   ]},
   {section:"Stretch", items:[
-    {name:"Doorway Pec Stretch", side:"Both", sets:"2", reps:"30 sec"},
-    {name:"Upper Trap Stretch (more on right if tight)", side:"Both", sets:"2", reps:"30 sec"}
+    {id:"strch_pec", name:"Doorway Pec Stretch", side:"Both", sets:"2", reps:"30 sec"},
+    {id:"strch_utrap", name:"Upper Trap Stretch (more on right if tight)", side:"Both", sets:"2", reps:"30 sec"}
   ]}
 ];
 
 const todayKey = () => new Date().toISOString().slice(0,10);
 const storage = { get:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)), set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)) };
-const DATA_KEY = 'scap_rib_progress_v1';
-const STATE_KEY = 'scap_rib_checked_v1';
+const DATA_KEY = 'scap_rib_progress_v1_gifs';
+const STATE_KEY = 'scap_rib_checked_v1_gifs';
 
 let totalItems = 0;
 const planEl = document.getElementById('plan');
+
 PLAN.forEach(section=>{
   const card=document.createElement('div'); card.className='card';
   const h=document.createElement('h2'); h.textContent=section.section; card.appendChild(h);
+
   section.items.forEach((it,idx)=>{
     totalItems++;
     const row=document.createElement('div'); row.className='item';
+
     const cb=document.createElement('input'); cb.type='checkbox'; cb.id=section.section+'_'+idx;
+
     const label=document.createElement('label'); label.setAttribute('for', cb.id);
-    label.innerHTML=`<strong>${it.name}</strong><br><small>${it.side}</small><br><small>Sets: ${it.sets} • Reps/Time: ${it.reps}</small>`;
-    row.appendChild(cb); row.appendChild(label);
+    label.innerHTML = `<strong>${it.name}</strong><br><small>${it.side}</small><br><small>Sets: ${it.sets} • Reps/Time: ${it.reps}</small>`;
+
+    const thumbBox=document.createElement('div');
+    const img=document.createElement('img'); img.className='thumb'; img.alt='Example: '+it.name;
+
+    const src = GIFS[it.id] || '';
+    img.src = src;
+
+    // if GIF missing, show a hashed placeholder style
+    img.onerror = () => { img.classList.add('missing'); img.alt='GIF missing'; };
+
+    img.onclick = ()=>openLightbox(src, it.name);
+
+    const cap=document.createElement('div'); cap.className='thumb-label'; cap.textContent='Example: '+it.name;
+
+    thumbBox.appendChild(img); thumbBox.appendChild(cap);
+
+    row.appendChild(cb);
+    row.appendChild(label);
+    row.appendChild(thumbBox);
     card.appendChild(row);
   });
+
   planEl.appendChild(card);
 });
 document.getElementById('totalCount').textContent=totalItems;
@@ -157,6 +213,26 @@ function exportData(){
 document.getElementById('markAll').onclick=markAllDone;
 document.getElementById('clearToday').onclick=clearToday;
 document.getElementById('exportData').onclick=exportData;
+
+function openLightbox(src, name){
+  if(!src) return;
+  const lb=document.getElementById('lightbox');
+  const img=document.getElementById('lightboxImg');
+  const cap=document.getElementById('lightboxCap');
+  img.src = src;
+  cap.textContent = name;
+  lb.style.display='flex';
+}
+function closeLightbox(e){
+  const lb=document.getElementById('lightbox');
+  if(e.target.id==='lightbox' || e.target.classList.contains('close')){
+    lb.style.display='none';
+    document.getElementById('lightboxImg').src='';
+    document.getElementById('lightboxCap').textContent='';
+  }
+}
+
+document.getElementById('todayDate').textContent=todayKey();
 refreshTotals();loadToday();
 </script>
 </body>
