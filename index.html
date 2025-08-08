@@ -5,34 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Scapular & Rib Program</title>
 <style>
-:root{--bg:#0b0b0c;--card:#141417;--text:#f3f3f4;--muted:#b8b8bf;--accent:#58a6ff;--ok:#3fb950;--border:#2a2a31}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.4}
-header{padding:18px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:5}
-h1{margin:0 0 4px 0;font-size:1.5rem}
-.subtitle{margin:0 0 8px 0;color:var(--muted)}
-.top-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-button{background:var(--card);color:var(--text);border:1px solid var(--border);padding:8px 10px;border-radius:8px;cursor:pointer}
-button:hover{border-color:var(--accent)}
-#summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;align-items:center}
-.progress{height:10px;background:#222;border-radius:6px;overflow:hidden}
-#bar{height:100%;width:0;background:var(--ok);transition:width .25s ease}
-main{padding:16px;max-width:1100px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
-.card h2{margin:0 0 8px 0;font-size:1.1rem}
+/* ... keep your existing styles above ... */
+
 .item{display:grid;grid-template-columns:28px 1fr 280px;gap:12px;align-items:start;padding:12px;border-top:1px dashed var(--border)}
-.item:first-child{border-top:none}
-.item small{color:var(--muted)}
+/* Make the instructions panel roomy and tappable */
 details{background:#121217;border:1px solid var(--border);border-radius:8px;padding:8px}
-summary{cursor:pointer;color:var(--accent);outline:none}
+summary{cursor:pointer;color:var(--accent);outline:none;padding:8px 6px;font-weight:600}
 summary::-webkit-details-marker{display:none}
 summary::before{content:"▶ ";font-size:0.9em}
 details[open] summary::before{content:"▼ "}
-.details-body{color:#ddd;font-size:0.92rem;margin-top:6px}
+.details-body{color:#ddd;font-size:0.95rem;line-height:1.5;margin-top:6px}
 ul{margin:6px 0 0 18px}
-footer{color:var(--muted);padding:24px 0;text-align:center}
-@media (max-width:860px){
-  .item{grid-template-columns:28px 1fr}
+
+/* ===== Mobile layout fix ===== */
+@media (max-width: 860px){
+  /* Switch to two columns: checkbox + content */
+  .item{grid-template-columns:24px 1fr;gap:10px;padding:10px}
+  /* Make the instructions span the full width under the label */
+  .item details{grid-column: 1 / -1; margin-top:6px}
+  /* Slightly larger tap targets */
+  summary{font-size:1rem;padding:10px 8px}
+  .details-body{font-size:0.98rem}
 }
 </style>
 </head>
