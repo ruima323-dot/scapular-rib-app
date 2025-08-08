@@ -17,28 +17,29 @@ button:hover{border-color:var(--accent)}
 #summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;align-items:center}
 .progress{height:10px;background:#222;border-radius:6px;overflow:hidden}
 #bar{height:100%;width:0;background:var(--ok);transition:width .25s ease}
-main{padding:16px;max-width:900px;margin:0 auto}
+main{padding:16px;max-width:1100px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
 .card h2{margin:0 0 8px 0;font-size:1.1rem}
-.item{display:grid;grid-template-columns:28px 1fr 118px;gap:10px;align-items:center;padding:10px;border-top:1px dashed var(--border)}
+.item{display:grid;grid-template-columns:28px 1fr 280px;gap:12px;align-items:start;padding:12px;border-top:1px dashed var(--border)}
 .item:first-child{border-top:none}
 .item small{color:var(--muted)}
-.thumb{width:118px;height:auto;cursor:pointer;border:1px solid var(--border);border-radius:6px;background:#000}
-.thumb-label{color:var(--muted);font-size:0.7rem;text-align:center;margin-top:4px}
+details{background:#121217;border:1px solid var(--border);border-radius:8px;padding:8px}
+summary{cursor:pointer;color:var(--accent);outline:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▶ ";font-size:0.9em}
+details[open] summary::before{content:"▼ "}
+.details-body{color:#ddd;font-size:0.92rem;margin-top:6px}
+ul{margin:6px 0 0 18px}
 footer{color:var(--muted);padding:24px 0;text-align:center}
-
-/* Lightbox */
-#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;justify-content:center;align-items:center;padding:20px}
-#lightbox img{max-width:92vw;max-height:90vh;border:4px solid #fff;border-radius:8px;background:#000}
-#lightbox .close{position:absolute;top:12px;right:16px;font-size:28px;color:#fff;cursor:pointer}
-#lightbox .caption{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#fff;font-size:0.9rem}
-.missing{background:repeating-linear-gradient(45deg,#222,#222 10px,#333 10px,#333 20px)}
+@media (max-width:860px){
+  .item{grid-template-columns:28px 1fr}
+}
 </style>
 </head>
 <body>
 <header>
   <h1>Scapular & Rib Program</h1>
-  <p class="subtitle">GIF thumbnails (click to enlarge) • Progress tracking</p>
+  <p class="subtitle">Click “Instructions” for step‑by‑step cues • Progress & streak tracking</p>
   <div class="top-actions">
     <button id="markAll">Mark all done</button>
     <button id="clearToday">Clear today</button>
@@ -54,67 +55,283 @@ footer{color:var(--muted);padding:24px 0;text-align:center}
 
 <main id="plan"></main>
 
-<!-- Lightbox -->
-<div id="lightbox" onclick="closeLightbox(event)">
-  <span class="close" aria-label="Close">×</span>
-  <img id="lightboxImg" src="" alt="exercise demo">
-  <div class="caption" id="lightboxCap"></div>
-</div>
-
 <footer>
-  <p>Flow: Core/Rib → Activation → Strength → Stretch. Keep left ribs down.</p>
+  <p>Flow: Core/Rib → Activation → Strength → Stretch. Keep left ribs down throughout.</p>
 </footer>
 
 <script>
-// Map exercise IDs to GIF paths in /gifs
-const GIFS = {
-  core_9090:        'gifs/core_9090.gif',
-  core_deadbug:     'gifs/core_deadbug.gif',
-  core_sideplank:   'gifs/core_sideplank.gif',
-  act_wallangels:   'gifs/act_wallangels.gif',
-  act_serratusslides:'gifs/act_serratusslides.gif',
-  act_retdep:       'gifs/act_retdep.gif',
-  str_right_punch:  'gifs/str_right_punch.gif',
-  str_right_ytyw:   'gifs/str_right_ytyw.gif',
-  str_left_y:       'gifs/str_left_y.gif',
-  str_left_latprayer:'gifs/str_left_latprayer.gif',
-  str_both_rower:   'gifs/str_both_rower.gif',
-  strch_pec:        'gifs/strch_pec.gif',
-  strch_utrap:      'gifs/strch_utrap.gif'
-};
-
 const PLAN = [
   {section:"Core / Rib Control", items:[
-    {id:"core_9090", name:"90/90 Breathing with Left Reach", side:"Left", sets:"3", reps:"5 breaths"},
-    {id:"core_deadbug", name:"Dead Bug (Left Focus)", side:"Left", sets:"2", reps:"8 per side"},
-    {id:"core_sideplank", name:"Side Plank", side:"Left", sets:"2", reps:"20–30 sec"}
+    {
+      name:"90/90 Breathing with Left Reach",
+      side:"Left",
+      sets:"3", reps:"5 breaths",
+      notes:"Exhale fully; pull LEFT ribs down; reach gently with left arm.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul>
+          <li>Lie on your back; hips and knees at 90° (shins parallel to floor).</li>
+          <li>Left arm reaches to the ceiling; right arm relaxed by side.</li>
+        </ul>
+        <strong>How</strong>
+        <ul>
+          <li>Inhale quietly through the nose, keep lower ribs heavy.</li>
+          <li>Exhale through the mouth like blowing out candles; <em>pull LEFT ribs down</em> and gently posteriorly tilt pelvis.</li>
+          <li>As you exhale, reach the <em>left</em> hand up 1–2 cm (shoulder protraction) without shrugging.</li>
+          <li>Pause 2s, then soft nasal inhale keeping ribs down. Repeat.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul>
+          <li>Feel abs engage low/left. No neck tension. Low back stays on floor.</li>
+        </ul>
+      </div>`
+    },
+    {
+      name:"Dead Bug (Left Focus)",
+      side:"Left",
+      sets:"2", reps:"8 per side",
+      notes:"Keep LEFT ribs tucked; move slow and controlled.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul>
+          <li>On back, hips/knees at 90°, arms to ceiling.</li>
+        </ul>
+        <strong>How</strong>
+        <ul>
+          <li>Exhale to set ribs down. Keep LEFT ribs down the whole set.</li>
+          <li>Opposite arm/leg move: right arm overhead as left leg extends; switch.</li>
+          <li>Only reach as far as you can keep ribs down (no back arch).</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul>
+          <li>Belly “hollows” slightly on exhale; low back kisses floor, not jams.</li>
+        </ul>
+      </div>`
+    },
+    {
+      name:"Side Plank",
+      side:"Left",
+      sets:"2", reps:"20–30 sec",
+      notes:"Stack ribs over pelvis; no sag or flare.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Left forearm under shoulder, legs straight and stacked.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li>Lift hips; think <em>ribs down</em> and <em>glutes tight</em>.</li>
+          <li>Hold; breathe light through nose without losing alignment.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul>
+          <li>Imagine zippering ribs toward pelvis; keep neck long; no shrug.</li>
+        </ul>
+      </div>`
+    }
   ]},
+
   {section:"Scapular Activation", items:[
-    {id:"act_wallangels", name:"Wall Angels", side:"Both", sets:"2", reps:"10"},
-    {id:"act_serratusslides", name:"Serratus Wall Slides", side:"Right", sets:"2", reps:"10"},
-    {id:"act_retdep", name:"Scap Retraction & Depression Hold", side:"Left", sets:"2", reps:"10 (3s hold)"}
+    {
+      name:"Wall Angels",
+      side:"Both",
+      sets:"2", reps:"10",
+      notes:"Keep lower back and ribs on wall; move slow.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul>
+          <li>Back, head, and <em>ribs</em> against the wall; feet 6–12 in forward.</li>
+          <li>Arms at 90°/90° (goalpost), wrists/back of hands lightly touching wall.</li>
+        </ul>
+        <strong>How</strong>
+        <ul>
+          <li>Slide arms up as high as you can while keeping ribs down and wrists near the wall.</li>
+          <li>Lower with control. No shrugging.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Think “long neck, ribs heavy, shoulder blades glide.”</li></ul>
+      </div>`
+    },
+    {
+      name:"Serratus Wall Slides",
+      side:"Right",
+      sets:"2", reps:"10",
+      notes:"Protract at the top; avoid upper‑trap shrug.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Forearms on wall at shoulder width, elbows ~90°.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li>Slide up while lightly pushing forearms into wall, then at the top “push the wall away” (shoulder blades wrap forward).</li>
+          <li>Lower without collapsing.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Feel it under the armpit (serratus), not in neck.</li></ul>
+      </div>`
+    },
+    {
+      name:"Scap Retraction & Depression Hold",
+      side:"Left",
+      sets:"2", reps:"10 (3s hold)",
+      notes:"Pull shoulder blade DOWN and IN without shrugging.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Sit or stand tall; arm by side.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li>Gently draw the left shoulder blade back (retract) and down (depress) as if sliding into a back pocket.</li>
+          <li>Hold 3s; relax. Repeat.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Chest stays quiet; no rib flare; no upper‑trap pinch.</li></ul>
+      </div>`
+    }
   ]},
+
   {section:"Strength – Right (Wing Fix)", items:[
-    {id:"str_right_punch", name:"Serratus Punch", side:"Right", sets:"3", reps:"12"},
-    {id:"str_right_ytyw", name:"Prone Y‑T‑W (hold top 2–3s on right)", side:"Right emphasis", sets:"2", reps:"10 each shape"}
+    {
+      name:"Serratus Punch",
+      side:"Right",
+      sets:"3", reps:"12",
+      notes:"Punch the ceiling with a straight elbow; scapula wraps forward.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Lie on back, light DB in right hand, arm straight above shoulder.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li>Without bending the elbow, reach the DB toward the ceiling to lift the shoulder blade off the floor slightly.</li>
+          <li>Lower slowly till shoulder blade returns to floor.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Feel it under the armpit (serratus). Keep ribs down.</li></ul>
+      </div>`
+    },
+    {
+      name:"Prone Y‑T‑W (Right Emphasis)",
+      side:"Right emphasis",
+      sets:"2", reps:"10 each shape",
+      notes:"Pause 2–3s at top on the right side.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Lie prone on bench/floor, forehead supported, thumbs up.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li><strong>Y:</strong> Arms overhead in a “Y”, lift with lower trap.</li>
+          <li><strong>T:</strong> Arms out to sides, squeeze mid‑back (no shrug).</li>
+          <li><strong>W:</strong> Bend elbows ~90°, pinch shoulder blades gently.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Keep neck long, ribs quiet; right side 2–3s pause at top.</li></ul>
+      </div>`
+    }
   ]},
+
   {section:"Strength – Left (Lower Trap)", items:[
-    {id:"str_left_y", name:"Prone Y Raise", side:"Left", sets:"3", reps:"12"},
-    {id:"str_left_latprayer", name:"Lat Prayer Lift", side:"Left", sets:"3", reps:"10"}
+    {
+      name:"Prone Y Raise",
+      side:"Left",
+      sets:"3", reps:"12",
+      notes:"Lead with thumb; think shoulder blade down & in.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Prone on bench/floor, left arm in “Y”.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li>Lift the left arm slightly off the floor, reaching long.</li>
+          <li>Lower slow; keep shoulder away from ear.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Lower trap should work; no upper‑trap take‑over.</li></ul>
+      </div>`
+    },
+    {
+      name:"Lat Prayer Lift",
+      side:"Left",
+      sets:"3", reps:"10",
+      notes:"Band anchored low; pull diagonally without rib flare.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Kneel with band anchored low to your left.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li>With arm straight, pull band up/diagonal toward forehead.</li>
+          <li>Control back down.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Ribs down; feel lat + lower trap, not neck.</li></ul>
+      </div>`
+    }
   ]},
+
   {section:"Strength – Both", items:[
-    {id:"str_both_rower", name:"Single‑arm Band Row → External Rotation", side:"Both", sets:"3", reps:"12 each"}
+    {
+      name:"Single‑arm Band Row → External Rotation",
+      side:"Both",
+      sets:"3", reps:"12 each",
+      notes:"Row to ribs, then rotate to 90°—control both phases.",
+      instr:`
+      <div class="details-body">
+        <strong>Setup</strong>
+        <ul><li>Band anchored at mid‑chest height.</li></ul>
+        <strong>How</strong>
+        <ul>
+          <li>Row elbow to ribs (scapula back & down), pause.</li>
+          <li>Then externally rotate to ~90° elbow angle; pause; return.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Chest quiet; no rib pop; smooth tempo.</li></ul>
+      </div>`
+    }
   ]},
+
   {section:"Stretch", items:[
-    {id:"strch_pec", name:"Doorway Pec Stretch", side:"Both", sets:"2", reps:"30 sec"},
-    {id:"strch_utrap", name:"Upper Trap Stretch (more on right if tight)", side:"Both", sets:"2", reps:"30 sec"}
+    {
+      name:"Doorway Pec Stretch",
+      side:"Both",
+      sets:"2", reps:"30 sec",
+      notes:"Elbow ~90°; step forward until mild stretch—no numbness.",
+      instr:`
+      <div class="details-body">
+        <strong>How</strong>
+        <ul>
+          <li>Forearm on doorframe, elbow ~shoulder height.</li>
+          <li>Step forward, rotate chest away slightly.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Breathe; ribs down; feel front‑chest stretch (not shoulder pinch).</li></ul>
+      </div>`
+    },
+    {
+      name:"Upper Trap Stretch",
+      side:"Both (more on right if tight)",
+      sets:"2", reps:"30 sec",
+      notes:"Keep shoulder down; gentle only.",
+      instr:`
+      <div class="details-body">
+        <strong>How</strong>
+        <ul>
+          <li>Hold edge of chair with right hand; tilt head left.</li>
+          <li>Option: light over‑pressure with left hand on head.</li>
+        </ul>
+        <strong>Cues</strong>
+        <ul><li>Shoulder stays depressed; slow nasal breaths.</li></ul>
+      </div>`
+    }
   ]}
 ];
 
 const todayKey = () => new Date().toISOString().slice(0,10);
 const storage = { get:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)), set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)) };
-const DATA_KEY = 'scap_rib_progress_v1_gifs';
-const STATE_KEY = 'scap_rib_checked_v1_gifs';
+const DATA_KEY = 'scap_rib_progress_v1_text';
+const STATE_KEY = 'scap_rib_checked_v1_text';
 
 let totalItems = 0;
 const planEl = document.getElementById('plan');
@@ -130,26 +347,16 @@ PLAN.forEach(section=>{
     const cb=document.createElement('input'); cb.type='checkbox'; cb.id=section.section+'_'+idx;
 
     const label=document.createElement('label'); label.setAttribute('for', cb.id);
-    label.innerHTML = `<strong>${it.name}</strong><br><small>${it.side}</small><br><small>Sets: ${it.sets} • Reps/Time: ${it.reps}</small>`;
+    label.innerHTML = `<strong>${it.name}</strong><br><small>${it.side}</small><br><small>Sets: ${it.sets} • Reps/Time: ${it.reps}</small><br><small><em>${it.notes}</em></small>`;
 
-    const thumbBox=document.createElement('div');
-    const img=document.createElement('img'); img.className='thumb'; img.alt='Example: '+it.name;
-
-    const src = GIFS[it.id] || '';
-    img.src = src;
-
-    // if GIF missing, show a hashed placeholder style
-    img.onerror = () => { img.classList.add('missing'); img.alt='GIF missing'; };
-
-    img.onclick = ()=>openLightbox(src, it.name);
-
-    const cap=document.createElement('div'); cap.className='thumb-label'; cap.textContent='Example: '+it.name;
-
-    thumbBox.appendChild(img); thumbBox.appendChild(cap);
+    const det=document.createElement('details');
+    const sum=document.createElement('summary'); sum.textContent='Instructions';
+    const body=document.createElement('div'); body.innerHTML = it.instr;
+    det.appendChild(sum); det.appendChild(body);
 
     row.appendChild(cb);
     row.appendChild(label);
-    row.appendChild(thumbBox);
+    row.appendChild(det);
     card.appendChild(row);
   });
 
@@ -157,6 +364,7 @@ PLAN.forEach(section=>{
 });
 document.getElementById('totalCount').textContent=totalItems;
 
+// Progress logic
 function loadToday(){
   const checked=storage.get(STATE_KEY+'_'+todayKey(),{});
   document.querySelectorAll('.item input[type=checkbox]').forEach(cb=>{
@@ -213,24 +421,6 @@ function exportData(){
 document.getElementById('markAll').onclick=markAllDone;
 document.getElementById('clearToday').onclick=clearToday;
 document.getElementById('exportData').onclick=exportData;
-
-function openLightbox(src, name){
-  if(!src) return;
-  const lb=document.getElementById('lightbox');
-  const img=document.getElementById('lightboxImg');
-  const cap=document.getElementById('lightboxCap');
-  img.src = src;
-  cap.textContent = name;
-  lb.style.display='flex';
-}
-function closeLightbox(e){
-  const lb=document.getElementById('lightbox');
-  if(e.target.id==='lightbox' || e.target.classList.contains('close')){
-    lb.style.display='none';
-    document.getElementById('lightboxImg').src='';
-    document.getElementById('lightboxCap').textContent='';
-  }
-}
 
 document.getElementById('todayDate').textContent=todayKey();
 refreshTotals();loadToday();
