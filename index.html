@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scapular & Rib Program</title>
+<style>
+:root{--bg:#0b0b0c;--card:#141417;--text:#f3f3f4;--muted:#b8b8bf;--accent:#58a6ff;--ok:#3fb950;--border:#2a2a31}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.4}
+header{padding:18px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:5}
+h1{margin:0 0 4px 0;font-size:1.5rem}
+.subtitle{margin:0 0 8px 0;color:var(--muted)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+button{background:var(--card);color:var(--text);border:1px solid var(--border);padding:8px 10px;border-radius:8px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+#summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;align-items:center}
+.progress{height:10px;background:#222;border-radius:6px;overflow:hidden}
+#bar{height:100%;width:0;background:var(--ok);transition:width .25s ease}
+main{padding:16px;max-width:900px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
+.card h2{margin:0 0 8px 0;font-size:1.1rem}
+.item{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:center;padding:8px;border-top:1px dashed var(--border)}
+.item:first-child{border-top:none}
+.item small{color:var(--muted)}
+footer{color:var(--muted);padding:24px 0;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>Scapular & Rib Program</h1>
+  <p class="subtitle">Offline • Progress tracking</p>
+  <div class="top-actions">
+    <button id="markAll">Mark all done</button>
+    <button id="clearToday">Clear today</button>
+    <button id="exportData">Export progress</button>
+  </div>
+  <div id="summary">
+    <div><strong>Today:</strong> <span id="todayDate"></span></div>
+    <div><strong>Completed:</strong> <span id="completedCount">0</span>/<span id="totalCount">0</span></div>
+    <div class="progress"><div id="bar"></div></div>
+    <div><strong>Streak:</strong> <span id="streak">0</span> days • <strong>Total sessions:</strong> <span id="totalSessions">0</span></div>
+  </div>
+</header>
+
+<main id="plan"></main>
+
+<footer>
+  <p>Tip: Do Core/Rib first, then Activation, Strength, Stretch. Keep left ribs down.</p>
+</footer>
+
+<script>
+const PLAN = [
+  {section:"Core / Rib Control", items:[
+    {name:"90/90 Breathing with Left Reach", side:"Left", sets:"3", reps:"5 breaths"},
+    {name:"Dead Bug (Left Focus)", side:"Left", sets:"2", reps:"8 per side"},
+    {name:"Side Plank", side:"Left", sets:"2", reps:"20–30 sec"}
+  ]},
+  {section:"Scapular Activation", items:[
+    {name:"Wall Angels", side:"Both", sets:"2", reps:"10"},
+    {name:"Serratus Wall Slides", side:"Right", sets:"2", reps:"10"},
+    {name:"Scap Retraction & Depression Hold", side:"Left", sets:"2", reps:"10 (3s hold)"}
+  ]},
+  {section:"Strength – Right (Wing Fix)", items:[
+    {name:"Serratus Punch", side:"Right", sets:"3", reps:"12"},
+    {name:"Prone Y-T-W (hold top 2–3s on right)", side:"Right emphasis", sets:"2", reps:"10 each shape"}
+  ]},
+  {section:"Strength – Left (Lower Trap)", items:[
+    {name:"Prone Y Raise", side:"Left", sets:"3", reps:"12"},
+    {name:"Lat Prayer Lift", side:"Left", sets:"3", reps:"10"}
+  ]},
+  {section:"Strength – Both", items:[
+    {name:"Single-arm Band Row → External Rotation", side:"Both", sets:"3", reps:"12 each"}
+  ]},
+  {section:"Stretch", items:[
+    {name:"Doorway Pec Stretch", side:"Both", sets:"2", reps:"30 sec"},
+    {name:"Upper Trap Stretch (more on right if tight)", side:"Both", sets:"2", reps:"30 sec"}
+  ]}
+];
+
+const todayKey = () => new Date().toISOString().slice(0,10);
+const storage = { get:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)), set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)) };
+const DATA_KEY = 'scap_rib_progress_v1';
+const STATE_KEY = 'scap_rib_checked_v1';
+
+let totalItems = 0;
+const planEl = document.getElementById('plan');
+PLAN.forEach(section=>{
+  const card=document.createElement('div'); card.className='card';
+  const h=document.createElement('h2'); h.textContent=section.section; card.appendChild(h);
+  section.items.forEach((it,idx)=>{
+    totalItems++;
+    const row=document.createElement('div'); row.className='item';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.id=section.section+'_'+idx;
+    const label=document.createElement('label'); label.setAttribute('for', cb.id);
+    label.innerHTML=`<strong>${it.name}</strong><br><small>${it.side}</small><br><small>Sets: ${it.sets} • Reps/Time: ${it.reps}</small>`;
+    row.appendChild(cb); row.appendChild(label);
+    card.appendChild(row);
+  });
+  planEl.appendChild(card);
+});
+document.getElementById('totalCount').textContent=totalItems;
+
+function loadToday(){
+  const checked=storage.get(STATE_KEY+'_'+todayKey(),{});
+  document.querySelectorAll('.item input[type=checkbox]').forEach(cb=>{
+    cb.checked=!!checked[cb.id];
+    cb.onchange=()=>{checked[cb.id]=cb.checked;storage.set(STATE_KEY+'_'+todayKey(),checked);updateSummary();maybeLogSession();}
+  });
+  updateSummary();
+}
+function updateSummary(){
+  document.getElementById('todayDate').textContent=todayKey();
+  const checked=storage.get(STATE_KEY+'_'+todayKey(),{});
+  const count=Object.values(checked).filter(Boolean).length;
+  document.getElementById('completedCount').textContent=count;
+  document.getElementById('bar').style.width=Math.round((count/totalItems)*100)+'%';
+}
+function markAllDone(){
+  const checked={};
+  document.querySelectorAll('.item input[type=checkbox]').forEach(cb=>{cb.checked=true;checked[cb.id]=true;});
+  storage.set(STATE_KEY+'_'+todayKey(),checked);
+  updateSummary();logSession();
+}
+function clearToday(){
+  storage.set(STATE_KEY+'_'+todayKey(),{});
+  document.querySelectorAll('.item input[type=checkbox]').forEach(cb=>cb.checked=false);
+  updateSummary();
+}
+function logSession(){
+  const data=storage.get(DATA_KEY,{history:[],streak:0,lastDate:null,sessions:0});
+  if(data.lastDate!==todayKey()){
+    data.history.push({date:todayKey(),completed:totalItems});
+    data.sessions++;
+    if(data.lastDate){
+      const diff=(new Date(todayKey())-new Date(data.lastDate))/(1000*60*60*24);
+      data.streak=(diff===1)?(data.streak+1):1;
+    } else {data.streak=1;}
+    data.lastDate=todayKey();
+    storage.set(DATA_KEY,data);refreshTotals();
+  }
+}
+function maybeLogSession(){
+  if(document.querySelectorAll('.item input[type=checkbox]:checked').length===totalItems) logSession();
+}
+function refreshTotals(){
+  const data=storage.get(DATA_KEY,{history:[],streak:0,lastDate:null,sessions:0});
+  document.getElementById('streak').textContent=data.streak||0;
+  document.getElementById('totalSessions').textContent=data.sessions||0;
+}
+function exportData(){
+  const data={plan:PLAN,completions:storage.get(DATA_KEY,{history:[],streak:0,lastDate:null,sessions:0}),today:storage.get(STATE_KEY+'_'+todayKey(),{})};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download='scapular_rib_progress.json';a.click();URL.revokeObjectURL(url);
+}
+document.getElementById('markAll').onclick=markAllDone;
+document.getElementById('clearToday').onclick=clearToday;
+document.getElementById('exportData').onclick=exportData;
+refreshTotals();loadToday();
+</script>
+</body>
+</html>
