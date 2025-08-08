@@ -3,36 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Scapular & Rib Program</title>
+<title>Scapular & Rib Program — v4 (mobile)</title>
 <style>
-/* ... keep your existing styles above ... */
-
-.item{display:grid;grid-template-columns:28px 1fr 280px;gap:12px;align-items:start;padding:12px;border-top:1px dashed var(--border)}
-/* Make the instructions panel roomy and tappable */
-details{background:#121217;border:1px solid var(--border);border-radius:8px;padding:8px}
+:root{--bg:#0b0b0c;--card:#141417;--text:#f3f3f4;--muted:#b8b8bf;--accent:#58a6ff;--ok:#3fb950;--border:#2a2a31}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+header{padding:18px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:5}
+h1{margin:0 0 4px 0;font-size:1.5rem}
+.subtitle{margin:0 0 8px 0;color:var(--muted)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+button{background:var(--card);color:var(--text);border:1px solid var(--border);padding:8px 10px;border-radius:8px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+#summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;align-items:center}
+.progress{height:10px;background:#222;border-radius:6px;overflow:hidden}
+#bar{height:100%;width:0;background:var(--ok);transition:width .25s ease}
+main{padding:16px;max-width:1100px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
+.card h2{margin:0 0 8px 0;font-size:1.1rem}
+.item{display:grid;grid-template-columns:28px 1fr 320px;gap:12px;align-items:start;padding:12px;border-top:1px dashed var(--border)}
+.item:first-child{border-top:none}
+.item small{color:var(--muted)}
+details{background:#121217;border:1px solid var(--border);border-radius:8px;padding:6px}
 summary{cursor:pointer;color:var(--accent);outline:none;padding:8px 6px;font-weight:600}
 summary::-webkit-details-marker{display:none}
 summary::before{content:"▶ ";font-size:0.9em}
 details[open] summary::before{content:"▼ "}
-.details-body{color:#ddd;font-size:0.95rem;line-height:1.5;margin-top:6px}
+.details-body{color:#ddd;font-size:0.95rem;line-height:1.55;margin-top:6px}
+.details-body strong{color:#fff}
 ul{margin:6px 0 0 18px}
 
-/* ===== Mobile layout fix ===== */
+/* ===== Mobile layout ===== */
 @media (max-width: 860px){
-  /* Switch to two columns: checkbox + content */
   .item{grid-template-columns:24px 1fr;gap:10px;padding:10px}
-  /* Make the instructions span the full width under the label */
-  .item details{grid-column: 1 / -1; margin-top:6px}
-  /* Slightly larger tap targets */
+  .item details{grid-column:1 / -1;margin-top:6px}
   summary{font-size:1rem;padding:10px 8px}
-  .details-body{font-size:0.98rem}
+  .details-body{font-size:1rem}
 }
+footer{color:var(--muted);padding:24px 0;text-align:center}
 </style>
 </head>
 <body>
 <header>
   <h1>Scapular & Rib Program</h1>
-  <p class="subtitle">Click “Instructions” for step‑by‑step cues • Progress & streak tracking</p>
+  <p class="subtitle">Tap “Instructions” for step‑by‑step cues • Progress & streak tracking</p>
   <div class="top-actions">
     <button id="markAll">Mark all done</button>
     <button id="clearToday">Clear today</button>
@@ -59,48 +72,42 @@ const PLAN = [
       name:"90/90 Breathing with Left Reach",
       side:"Left",
       sets:"3", reps:"5 breaths",
-      notes:"Exhale fully; pull LEFT ribs down; reach gently with left arm.",
+      notes:"Exhale fully; pull LEFT ribs down; gentle left reach.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
         <ul>
-          <li>Lie on your back; hips and knees at 90° (shins parallel to floor).</li>
-          <li>Left arm reaches to the ceiling; right arm relaxed by side.</li>
+          <li>On back; hips/knees at 90° (shins parallel).</li>
+          <li>Left arm to ceiling; right arm relaxed at side.</li>
         </ul>
         <strong>How</strong>
         <ul>
-          <li>Inhale quietly through the nose, keep lower ribs heavy.</li>
-          <li>Exhale through the mouth like blowing out candles; <em>pull LEFT ribs down</em> and gently posteriorly tilt pelvis.</li>
-          <li>As you exhale, reach the <em>left</em> hand up 1–2 cm (shoulder protraction) without shrugging.</li>
-          <li>Pause 2s, then soft nasal inhale keeping ribs down. Repeat.</li>
+          <li>Quiet nasal inhale while keeping lower ribs heavy.</li>
+          <li>Long mouth exhale as if blowing out candles; <em>pull LEFT ribs down</em> and lightly posteriorly tilt pelvis.</li>
+          <li>During exhale, reach left hand up ~1–2 cm (scap protraction) without shrugging.</li>
+          <li>Pause 2s; soft nasal inhale keeping ribs down. Repeat.</li>
         </ul>
         <strong>Cues</strong>
-        <ul>
-          <li>Feel abs engage low/left. No neck tension. Low back stays on floor.</li>
-        </ul>
+        <ul><li>Feel low/left abs; no neck tension; low back stays in contact with floor.</li></ul>
       </div>`
     },
     {
       name:"Dead Bug (Left Focus)",
       side:"Left",
       sets:"2", reps:"8 per side",
-      notes:"Keep LEFT ribs tucked; move slow and controlled.",
+      notes:"Keep LEFT ribs tucked; slow and controlled range.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul>
-          <li>On back, hips/knees at 90°, arms to ceiling.</li>
-        </ul>
+        <ul><li>On back; hips/knees 90°; arms to ceiling.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>Exhale to set ribs down. Keep LEFT ribs down the whole set.</li>
-          <li>Opposite arm/leg move: right arm overhead as left leg extends; switch.</li>
-          <li>Only reach as far as you can keep ribs down (no back arch).</li>
+          <li>Exhale to set ribs down.</li>
+          <li>Right arm overhead as <em>left</em> leg extends; switch sides next rep.</li>
+          <li>Stop the reach the moment ribs try to pop up.</li>
         </ul>
         <strong>Cues</strong>
-        <ul>
-          <li>Belly “hollows” slightly on exhale; low back kisses floor, not jams.</li>
-        </ul>
+        <ul><li>Belly gently hollows on exhale; low back “kisses” floor (no jam).</li></ul>
       </div>`
     },
     {
@@ -111,16 +118,14 @@ const PLAN = [
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Left forearm under shoulder, legs straight and stacked.</li></ul>
+        <ul><li>Left forearm under shoulder; legs straight and stacked.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>Lift hips; think <em>ribs down</em> and <em>glutes tight</em>.</li>
-          <li>Hold; breathe light through nose without losing alignment.</li>
+          <li>Lift hips; think <em>ribs down</em>, <em>glutes tight</em>, head long.</li>
+          <li>Breathe quietly through nose and hold the line.</li>
         </ul>
         <strong>Cues</strong>
-        <ul>
-          <li>Imagine zippering ribs toward pelvis; keep neck long; no shrug.</li>
-        </ul>
+        <ul><li>Imagine zippering ribs toward pelvis; avoid shoulder shrug.</li></ul>
       </div>`
     }
   ]},
@@ -130,57 +135,58 @@ const PLAN = [
       name:"Wall Angels",
       side:"Both",
       sets:"2", reps:"10",
-      notes:"Keep lower back and ribs on wall; move slow.",
+      notes:"Ribs + low back on wall; move slow without shrugging.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
         <ul>
-          <li>Back, head, and <em>ribs</em> against the wall; feet 6–12 in forward.</li>
-          <li>Arms at 90°/90° (goalpost), wrists/back of hands lightly touching wall.</li>
+          <li>Head, ribs, and back against wall; feet 6–12 in forward.</li>
+          <li>Arms in goalpost (90°/90°), wrists lightly touch wall.</li>
         </ul>
         <strong>How</strong>
         <ul>
-          <li>Slide arms up as high as you can while keeping ribs down and wrists near the wall.</li>
-          <li>Lower with control. No shrugging.</li>
+          <li>Slide arms up while keeping ribs down and wrists near wall.</li>
+          <li>Lower with control; maintain neck long.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Think “long neck, ribs heavy, shoulder blades glide.”</li></ul>
+        <ul><li>Feel shoulder blades glide; no lumbar arch or neck tension.</li></ul>
       </div>`
     },
     {
       name:"Serratus Wall Slides",
       side:"Right",
       sets:"2", reps:"10",
-      notes:"Protract at the top; avoid upper‑trap shrug.",
+      notes:"Protract at the top; avoid upper‑trap takeover.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Forearms on wall at shoulder width, elbows ~90°.</li></ul>
+        <ul><li>Forearms on wall, shoulder‑width, elbows ~90°.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>Slide up while lightly pushing forearms into wall, then at the top “push the wall away” (shoulder blades wrap forward).</li>
-          <li>Lower without collapsing.</li>
+          <li>Slide up while lightly pushing forearms into wall.</li>
+          <li>At the top, “push the wall away” so shoulder blades wrap forward.</li>
+          <li>Lower back down without collapsing.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Feel it under the armpit (serratus), not in neck.</li></ul>
+        <ul><li>Feel under armpit (serratus), not neck. Keep ribs quiet.</li></ul>
       </div>`
     },
     {
       name:"Scap Retraction & Depression Hold",
       side:"Left",
       sets:"2", reps:"10 (3s hold)",
-      notes:"Pull shoulder blade DOWN and IN without shrugging.",
+      notes:"Slide shoulder blade DOWN & IN; chest stays quiet.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Sit or stand tall; arm by side.</li></ul>
+        <ul><li>Sit/stand tall; left arm by side, palm neutral.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>Gently draw the left shoulder blade back (retract) and down (depress) as if sliding into a back pocket.</li>
-          <li>Hold 3s; relax. Repeat.</li>
+          <li>Draw left shoulder blade back (retract) and down (depress) like into a back pocket.</li>
+          <li>Hold 3s; release. Repeat.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Chest stays quiet; no rib flare; no upper‑trap pinch.</li></ul>
+        <ul><li>No shrug; ribs down; think “collarbone wide.”</li></ul>
       </div>`
     }
   ]},
@@ -190,37 +196,37 @@ const PLAN = [
       name:"Serratus Punch",
       side:"Right",
       sets:"3", reps:"12",
-      notes:"Punch the ceiling with a straight elbow; scapula wraps forward.",
+      notes:"Straight elbow; punch to ceiling; scapula wraps forward.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Lie on back, light DB in right hand, arm straight above shoulder.</li></ul>
+        <ul><li>On back; light DB in right hand, arm straight above shoulder.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>Without bending the elbow, reach the DB toward the ceiling to lift the shoulder blade off the floor slightly.</li>
-          <li>Lower slowly till shoulder blade returns to floor.</li>
+          <li>Without bending elbow, reach DB up to lift shoulder blade off floor slightly.</li>
+          <li>Lower slowly until shoulder blade contacts floor again.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Feel it under the armpit (serratus). Keep ribs down.</li></ul>
+        <ul><li>Feel serratus (side of ribs). Keep ribs down; no neck strain.</li></ul>
       </div>`
     },
     {
       name:"Prone Y‑T‑W (Right Emphasis)",
       side:"Right emphasis",
       sets:"2", reps:"10 each shape",
-      notes:"Pause 2–3s at top on the right side.",
+      notes:"Pause 2–3s at top on right side for each shape.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Lie prone on bench/floor, forehead supported, thumbs up.</li></ul>
+        <ul><li>Prone on bench/floor; forehead supported; thumbs up.</li></ul>
         <strong>How</strong>
         <ul>
-          <li><strong>Y:</strong> Arms overhead in a “Y”, lift with lower trap.</li>
-          <li><strong>T:</strong> Arms out to sides, squeeze mid‑back (no shrug).</li>
-          <li><strong>W:</strong> Bend elbows ~90°, pinch shoulder blades gently.</li>
+          <li><strong>Y:</strong> Arms overhead; lift with lower trap.</li>
+          <li><strong>T:</strong> Arms out to side; squeeze mid‑back without shrug.</li>
+          <li><strong>W:</strong> Bend elbows ~90°; gently pinch shoulder blades.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Keep neck long, ribs quiet; right side 2–3s pause at top.</li></ul>
+        <ul><li>Right side: 2–3s pause at top. Neck long; ribs quiet.</li></ul>
       </div>`
     }
   ]},
@@ -234,29 +240,29 @@ const PLAN = [
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Prone on bench/floor, left arm in “Y”.</li></ul>
+        <ul><li>Prone; left arm in “Y”; palm thumbs‑up.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>Lift the left arm slightly off the floor, reaching long.</li>
-          <li>Lower slow; keep shoulder away from ear.</li>
+          <li>Lift left arm slightly off floor, reaching long.</li>
+          <li>Lower slowly; avoid shoulder creeping toward ear.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Lower trap should work; no upper‑trap take‑over.</li></ul>
+        <ul><li>Lower trap should work; no upper‑trap takeover.</li></ul>
       </div>`
     },
     {
       name:"Lat Prayer Lift",
       side:"Left",
       sets:"3", reps:"10",
-      notes:"Band anchored low; pull diagonally without rib flare.",
+      notes:"Band low‑anchor; diagonal pull without rib flare.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Kneel with band anchored low to your left.</li></ul>
+        <ul><li>Kneel; band anchored low to your left.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>With arm straight, pull band up/diagonal toward forehead.</li>
-          <li>Control back down.</li>
+          <li>Arm straight; pull band up/diagonal toward forehead.</li>
+          <li>Return with control; keep abs lightly on.</li>
         </ul>
         <strong>Cues</strong>
         <ul><li>Ribs down; feel lat + lower trap, not neck.</li></ul>
@@ -269,18 +275,18 @@ const PLAN = [
       name:"Single‑arm Band Row → External Rotation",
       side:"Both",
       sets:"3", reps:"12 each",
-      notes:"Row to ribs, then rotate to 90°—control both phases.",
+      notes:"Row to ribs, then rotate to ~90°; smooth control.",
       instr:`
       <div class="details-body">
         <strong>Setup</strong>
-        <ul><li>Band anchored at mid‑chest height.</li></ul>
+        <ul><li>Band anchored at mid‑chest height; neutral stance.</li></ul>
         <strong>How</strong>
         <ul>
-          <li>Row elbow to ribs (scapula back & down), pause.</li>
-          <li>Then externally rotate to ~90° elbow angle; pause; return.</li>
+          <li>Row elbow to ribs (scap back & down), brief pause.</li>
+          <li>Then externally rotate to ~90° elbow angle; pause; reverse.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Chest quiet; no rib pop; smooth tempo.</li></ul>
+        <ul><li>Chest quiet; no rib pop; steady tempo.</li></ul>
       </div>`
     }
   ]},
@@ -290,32 +296,32 @@ const PLAN = [
       name:"Doorway Pec Stretch",
       side:"Both",
       sets:"2", reps:"30 sec",
-      notes:"Elbow ~90°; step forward until mild stretch—no numbness.",
+      notes:"Elbow ~90° at shoulder height; step until mild stretch (no numbness).",
       instr:`
       <div class="details-body">
         <strong>How</strong>
         <ul>
-          <li>Forearm on doorframe, elbow ~shoulder height.</li>
-          <li>Step forward, rotate chest away slightly.</li>
+          <li>Forearm on doorframe; elbow ~shoulder height.</li>
+          <li>Step forward and rotate chest away slightly until gentle stretch.</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Breathe; ribs down; feel front‑chest stretch (not shoulder pinch).</li></ul>
+        <ul><li>Breathe; ribs down; feel front‑chest stretch, not shoulder pinch.</li></ul>
       </div>`
     },
     {
       name:"Upper Trap Stretch",
       side:"Both (more on right if tight)",
       sets:"2", reps:"30 sec",
-      notes:"Keep shoulder down; gentle only.",
+      notes:"Keep shoulder down; gentle only; breathe slow.",
       instr:`
       <div class="details-body">
         <strong>How</strong>
         <ul>
-          <li>Hold edge of chair with right hand; tilt head left.</li>
-          <li>Option: light over‑pressure with left hand on head.</li>
+          <li>Hold chair with right hand; tilt head left.</li>
+          <li>Optional: light over‑pressure with left hand on head (gentle).</li>
         </ul>
         <strong>Cues</strong>
-        <ul><li>Shoulder stays depressed; slow nasal breaths.</li></ul>
+        <ul><li>Right shoulder stays depressed; slow nasal breaths; no pain.</li></ul>
       </div>`
     }
   ]}
@@ -323,8 +329,8 @@ const PLAN = [
 
 const todayKey = () => new Date().toISOString().slice(0,10);
 const storage = { get:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)), set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)) };
-const DATA_KEY = 'scap_rib_progress_v1_text';
-const STATE_KEY = 'scap_rib_checked_v1_text';
+const DATA_KEY = 'scap_rib_progress_v1_text_mobile';
+const STATE_KEY = 'scap_rib_checked_v1_text_mobile';
 
 let totalItems = 0;
 const planEl = document.getElementById('plan');
